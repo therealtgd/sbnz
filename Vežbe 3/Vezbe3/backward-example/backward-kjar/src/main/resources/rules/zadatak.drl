@@ -1,0 +1,142 @@
+package rules;
+import com.ftn.sbnz.backward.model.models.Person;
+import com.ftn.sbnz.backward.model.models.Man;
+import com.ftn.sbnz.backward.model.models.Woman;
+import com.ftn.sbnz.backward.model.models.Parent;
+
+query "isMan" (Person p)
+  man: Man(name == p.name)
+end
+
+query "isWoman" (Person p)
+  woman: Woman(name == p.name)
+end
+
+query "isParent" (Person p, Person d)
+  parent: Parent(name == p.name, descendantName == d.name)
+end
+
+query "areSiblings" (Person p1, Person p2)
+  Parent($parent: name, decendant === p1) and Parent(name == $parent, decendant === p2)
+end
+
+query "areFullSiblings" (Person p1, Person p2)
+  $p1: Parent(decendant === p1) and Parent(name == $p1.name, decendant === p2)
+  $p2: Parent(this !== $p1, decendant === p1) and Parent(name == $p2.name, decendant == p2)
+end
+
+query "isUncleOrAunt" (Person u, Person c)
+  Parent(unclesParent = name, u.name) and Parent(childsParent, c.name) and Parent(unclesParent, childsParent)
+end
+
+query "isGrandParent" (Person gp, Person c)
+  Parent(gp == gp.name, childsParent) and Parent(childsParent, c.name)
+end
+
+
+rule "man"
+    agenda-group "man"
+    when
+        $p: Person()
+        isMan($p;)
+    then
+     System.out.println($p.getName());
+end
+
+rule "woman"
+    agenda-group "woman"
+    when
+        $p: Person()
+        isWoman($p;)
+    then
+        System.out.println($p.getName());
+end
+
+rule "father"
+    agenda-group "father"
+    when
+        $f: Person()
+        $d: Person()
+        isMan($f;)
+        isParent($f, $d;)
+    then
+        System.out.println($f.getName() + " " + $d.getName());
+end
+
+rule "mother"
+    agenda-group "mother"
+    when
+        $m: Person()
+        $d: Person()
+        isWoman($m;)
+        isParent($m, $d;)
+    then
+        System.out.println($m.getName() + " " + $d.getName());
+end
+
+rule "son"
+  when
+    $s: Person()
+    $p: Preson()
+    isMan($s;)
+    isParent($p, $s)
+  then
+    System.out.println($s.getName() + " " + $p.getName());
+end
+
+rule "daughter"
+  when
+    $d: Person()
+    $p: Preson()
+    isWoman($d;)
+    isParent($p, $d)
+  then
+    System.out.println($d.getName() + " " + $p.getName());
+end
+
+rule "siblings"
+  when
+    $s1: Person()
+    $s2: Person(this !== $s1)
+    areSiblings($s1, $s2;)
+  then
+    System.out.println($s1.getName() + " " + $s2.getName());
+end
+
+rule "fullSiblings"
+  when
+    $s1: Person()
+    $s2: Person(this !== $s1)
+    areFullSiblings($s1, $s2;)
+  then
+    System.out.println($s1.getName() + " " + $s2.getName());
+end
+
+rule "uncle"
+  when
+    $u: Person()
+    $c: Person()
+    isMan($u;)
+    isUncleOrAunt($u, $c;)
+  then
+    System.out.println($u.getName() + " " + $c.getName());
+end
+
+rule "aunt"
+  when
+    $a: Person()
+    $c: Person()
+    isWoman($a)
+    isUncleOrAunt($a, $c;)
+  then
+    System.out.println($a.getName() + " " + $c.getName());
+end
+
+rule "grandparent"
+  when
+    $gp: Person()
+    $c: Person()
+    isGrandParent($gp, $c;)
+  then
+    System.out.println($gp.getName() + " " + $c.getName());
+end

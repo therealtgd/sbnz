@@ -1,0 +1,16 @@
+package letovi;
+
+rule "Redirect let1 if let2 didn't clear the runway"
+  when
+    $let1 : SletanjeEvent()
+    $let2: SletanjeEvent(
+      this != $let1,
+      this before[0, 3m] $let1
+    )
+  then
+    System.out.println("Redirecting let1 because let2 didn't clear the runway");
+    modify($let1) {
+        setRedirecting(true)
+    }
+end
+    

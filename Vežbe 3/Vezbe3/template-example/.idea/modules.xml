@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/template-example.iml" filepath="$PROJECT_DIR$/.idea/template-example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/template-kjar/template-kjar.iml" filepath="$PROJECT_DIR$/template-kjar/template-kjar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/template-model/template-model.iml" filepath="$PROJECT_DIR$/template-model/template-model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/template-service/template-service.iml" filepath="$PROJECT_DIR$/template-service/template-service.iml" />
+    </modules>
+  </component>
+</project>
